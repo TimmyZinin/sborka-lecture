@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI vs Найм: гонка вооружений 2026 — СБОРКА</title>
+<style>
+  /* ============================================
+     DESIGN SYSTEM — СБОРКА Lectures 2026
+     Tokens → Components → Slides
+     ============================================ */
+
+  /* --- TOKENS --- */
+  :root {
+    /* Color palette */
+    --c-bg:        #FAFAF7;
+    --c-surface:   #FFFFFF;
+    --c-border:    #DDD9D3;
+    --c-border-lt: #EDEBE7;
+    --c-muted-bg:  #F2F0EB;
+
+    --c-text:      #221F1B;
+    --c-body:      #585048;
+    --c-caption:   #8A8078;
+    --c-faint:     #B0A898;
+
+    --c-accent:    #DD4F38;
+    --c-accent-dk: #B5563E;
+    --c-green:     #3F9664;
+    --c-green-bg:  #f0f9f4;
+    --c-red:       #DC2626;
+    --c-red-bg:    #FEF2F0;
+    --c-blue:      #2563EB;
+    --c-blue-bg:   #EFF6FF;
+
+    /* Typography */
+    --f-display: 'Bricolage Grotesque', sans-serif;
+    --f-body:    'Source Sans 3', sans-serif;
+    --f-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+    /* Spacing */
+    --s-xs: 4px;  --s-sm: 8px;  --s-md: 16px;
+    --s-lg: 24px; --s-xl: 32px; --s-2xl: 48px;
+
+    /* Radius */
+    --r-sm: 6px; --r-md: 12px; --r-lg: 20px;
+  }
+
+  @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+
+  /* --- RESET --- */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--f-body);
+    background: var(--c-bg);
+    color: var(--c-text);
+    overflow: hidden;
+  }
+
+  /* --- SLIDE CONTAINER --- */
+  .slide {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    padding: 44px 64px;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+  }
+  .slide.active { display: flex; animation: fadeIn .25s ease-out; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+  .slide::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle at top right, rgba(181,86,62,.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* --- TYPOGRAPHY --- */
+  h1 { font-family:var(--f-display); font-size:3rem; font-weight:800; line-height:1.12; color:var(--c-accent-dk); margin-bottom:var(--s-md); }
+  h2 { font-family:var(--f-display); font-size:2.1rem; font-weight:700; line-height:1.2; color:var(--c-text); margin-bottom:var(--s-md); }
+  h3 { font-family:var(--f-display); font-size:1.35rem; font-weight:600; color:var(--c-accent-dk); margin-bottom:var(--s-sm); }
+  p, li { font-size:1.2rem; line-height:1.65; color:var(--c-body); }
+  .subtitle { font-size:1.05rem; color:var(--c-caption); font-weight:600; letter-spacing:.04em; text-transform:uppercase; margin-bottom:var(--s-xs); }
+  .source { font-size:.75rem; color:var(--c-faint); margin-top:var(--s-md); font-style:italic; line-height:1.5; }
+  .source a { color:var(--c-faint); text-decoration:underline; }
+
+  /* --- LISTS --- */
+  ul { list-style:none; padding:0; }
+  ul li { padding:5px 0 5px 24px; position:relative; }
+  ul li::before { content:''; position:absolute; left:2px; top:14px; width:7px; height:7px; border-radius:50%; background:var(--c-accent); }
+  .green-dot li::before { background:var(--c-green); }
+  .red-dot li::before { background:var(--c-red); }
+  .blue-dot li::before { background:var(--c-blue); }
+
+  /* --- LAYOUT --- */
+  .cols-2 { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-lg); margin-top:var(--s-md); }
+  .cols-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:var(--s-md); margin-top:var(--s-md); }
+  .cols-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:var(--s-md); margin-top:var(--s-md); }
+
+  /* --- COMPONENTS --- */
+
+  /* Card */
+  .card {
+    background:var(--c-surface); border:1px solid var(--c-border);
+    border-radius:var(--r-md); padding:var(--s-lg);
+    box-shadow:0 2px 10px rgba(88,80,72,.05);
+  }
+  .card h3 { margin-bottom:10px; }
+  .card--accent { border:2px solid var(--c-accent); box-shadow:0 2px 14px rgba(221,79,56,.07); }
+  .card--green { border:2px solid var(--c-green); }
+
+  /* Stat box */
+  .stat-row { display:flex; gap:var(--s-md); margin:var(--s-md) 0; }
+  .stat {
+    flex:1; text-align:center; background:var(--c-muted-bg);
+    border-radius:var(--r-md); padding:20px 12px;
+  }
+  .stat__num { font-family:var(--f-display); font-size:2.6rem; font-weight:800; color:var(--c-accent); line-height:1.1; }
+  .stat__num--green { color:var(--c-green); }
+  .stat__num--dark  { color:var(--c-text); }
+  .stat__num--blue  { color:var(--c-blue); }
+  .stat__label { font-size:.9rem; color:var(--c-caption); margin-top:4px; font-weight:500; }
+
+  /* Callout blocks */
+  .callout {
+    border-left:4px solid var(--c-accent);
+    background:var(--c-muted-bg);
+    padding:16px 22px; border-radius:0 var(--r-sm) var(--r-sm) 0;
+    margin:var(--s-md) 0;
+  }
+  .callout--red    { border-color:var(--c-red); background:var(--c-red-bg); }
+  .callout--green  { border-color:var(--c-green); background:var(--c-green-bg); }
+  .callout--blue   { border-color:var(--c-blue); background:var(--c-blue-bg); }
+
+  /* Tag / badge */
+  .tag {
+    display:inline-block; background:var(--c-muted-bg); color:var(--c-accent-dk);
+    padding:3px 14px; border-radius:var(--r-lg); font-size:.85rem; font-weight:600;
+    margin-right:6px; margin-bottom:6px; border:1px solid var(--c-border);
+  }
+  .tag--green { color:var(--c-green); border-color:#c6e6d4; background:var(--c-green-bg); }
+  .tag--blue  { color:var(--c-blue); border-color:#bfdbfe; background:var(--c-blue-bg); }
+  .tag--red   { color:var(--c-red); border-color:#fecaca; background:var(--c-red-bg); }
+
+  /* Big number (standalone) */
+  .big-num { font-family:var(--f-display); font-size:4rem; font-weight:800; color:var(--c-accent); }
+  .big-num--green { color:var(--c-green); }
+  .big-num--dark  { color:var(--c-text); }
+
+  /* Divider */
+  .divider { width:56px; height:4px; background:var(--c-accent); border-radius:2px; margin:10px 0; }
+
+  /* Table */
+  table { width:100%; border-collapse:collapse; margin:10px 0; }
+  th { padding:10px 12px; font-weight:700; color:var(--c-text); border-bottom:2px solid var(--c-border); text-align:left; font-size:1.05rem; }
+  td { padding:8px 12px; border-bottom:1px solid var(--c-border-lt); font-size:1.05rem; color:var(--c-body); }
+  tr:last-child td { border-bottom:none; }
+
+  /* CTA button */
+  .cta { display:inline-block; background:var(--c-accent); color:#fff; padding:14px 40px; border-radius:var(--r-sm); font-size:1.15rem; font-weight:700; text-decoration:none; border:none; cursor:pointer; transition:background .2s; }
+  .cta:hover { background:var(--c-accent-dk); }
+
+  /* VS block */
+  .vs-row { display:flex; align-items:center; gap:var(--s-lg); margin:var(--s-md) 0; }
+  .vs-badge { font-family:var(--f-display); font-size:1.8rem; font-weight:800; color:var(--c-accent); flex-shrink:0; }
+
+  /* News ticker */
+  .news-item { display:flex; gap:14px; align-items:flex-start; margin-bottom:14px; }
+  .news-item__date { font-family:var(--f-display); font-weight:700; color:var(--c-accent); font-size:.95rem; white-space:nowrap; min-width:70px; padding-top:2px; }
+  .news-item__body { font-size:1.1rem; line-height:1.5; }
+  .news-item__src  { font-size:.8rem; color:var(--c-faint); }
+
+  /* Repo card */
+  .repo { display:flex; gap:12px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--c-border-lt); }
+  .repo:last-child { border-bottom:none; }
+  .repo__stars { font-family:var(--f-display); font-weight:700; color:var(--c-accent); font-size:.95rem; min-width:56px; text-align:right; padding-top:2px; }
+  .repo__name  { font-weight:700; color:var(--c-text); font-size:1.05rem; }
+  .repo__desc  { font-size:.95rem; color:var(--c-caption); }
+  .repo a { color:var(--c-accent-dk); text-decoration:none; }
+  .repo a:hover { text-decoration:underline; }
+
+  /* --- CONTROLS --- */
+  .controls {
+    position:fixed; bottom:20px; right:28px;
+    display:flex; gap:8px; z-index:100;
+  }
+  .controls button {
+    background:var(--c-muted-bg); border:1.5px solid #C5BFB6; color:var(--c-body);
+    padding:10px 22px; border-radius:var(--r-sm); cursor:pointer;
+    font-size:.92rem; font-family:var(--f-body); font-weight:600;
+    box-shadow:0 1px 6px rgba(88,80,72,.1); transition:all .2s;
+  }
+  .controls button:hover { background:#E8E4DE; border-color:var(--c-accent-dk); color:var(--c-accent-dk); }
+  .controls .btn-primary { background:var(--c-accent); color:#fff; border-color:var(--c-accent); }
+  .controls .btn-primary:hover { background:var(--c-accent-dk); border-color:var(--c-accent-dk); }
+
+  .slide-counter { position:fixed; bottom:24px; left:28px; color:var(--c-faint); font-size:.88rem; font-weight:500; }
+
+  /* --- COMPACT MODIFIER --- */
+  .compact p, .compact li { font-size:1.1rem; line-height:1.55; }
+  .compact h2 { margin-bottom:12px; }
+  .compact .card { padding:20px; }
+  .compact .stat { padding:16px 10px; }
+  .compact .stat__num { font-size:2.2rem; }
+  .compact ul li { padding:4px 0 4px 24px; }
+</style>
+</head>
+<body>
+
+<!-- ================ SLIDE 1: TITLE ================ -->
+<div class="slide active" id="s1">
+  <div style="text-align:center;">
+    <p class="subtitle" style="margin-bottom:14px;">СБОРКА &middot; Лекция &middot; 6 апреля 2026</p>
+    <h1 style="font-size:3.4rem; margin-bottom:14px;">AI vs Найм:<br>гонка вооружений 2026</h1>
+    <div class="divider" style="margin:14px auto;"></div>
+    <p style="font-size:1.4rem; color:var(--c-body); margin-top:14px;">Свежие данные, горячие новости и конкретные инструменты</p>
+    <p style="font-size:1.1rem; color:var(--c-faint); margin-top:36px;">Тим Зинин</p>
+  </div>
+</div>
+
+<!-- ================ SLIDE 2: HOT NEWS ================ -->
+<div class="slide compact" id="s2">
+  <p class="subtitle">Заголовки последних дней</p>
+  <h2>Что произошло, пока вы искали работу</h2>
+  <div class="news-item">
+    <div class="news-item__date">5 апр</div>
+    <div><div class="news-item__body"><strong>&laquo;Глобальная чистка белых воротничков&raquo;</strong> &mdash; российские компании начали тотальную трансформацию с ИИ. Бухгалтерия, делопроизводство, операционка &mdash; первые под удар.</div><div class="news-item__src">V1.ru / MSK1.ru</div></div>
+  </div>
+  <div class="news-item">
+    <div class="news-item__date">3 апр</div>
+    <div><div class="news-item__body"><strong>hh-индекс: 11.4</strong> &mdash; исторический антирекорд. 80.6 млн резюме (+41%), 757 тыс. вакансий (-27%). Порог катастрофы (12) пробит в ряде регионов.</div><div class="news-item__src">ExpertJob.ru</div></div>
+  </div>
+  <div class="news-item">
+    <div class="news-item__date">20 мар</div>
+    <div><div class="news-item__body"><strong>Минцифры: законопроект о блокировке ChatGPT и Claude</strong> в России с 1 сентября 2027. Останутся DeepSeek и Qwen (open-source, локальный хостинг).</div><div class="news-item__src">NGS.ru &mdash; 82K просмотров</div></div>
+  </div>
+  <div class="news-item">
+    <div class="news-item__date">мар 26</div>
+    <div><div class="news-item__body"><strong>HBR: компании увольняют из-за потенциала AI, не из-за результатов.</strong> Только 1 из 50 AI-инвестиций приносит трансформационную ценность.</div><div class="news-item__src">Harvard Business Review</div></div>
+  </div>
+</div>
+
+<!-- ================ SLIDE 3: GLOBAL PICTURE ================ -->
+<div class="slide" id="s3">
+  <p class="subtitle">Глобальная картина</p>
+  <h2>Масштаб изменений: данные 2026 года</h2>
+  <div class="stat-row">
+    <div class="stat">
+      <div class="stat__num--green" style="font-family:var(--f-display); font-size:2.6rem; font-weight:800;">+170M</div>
+      <div class="stat__label">новых ролей<br>к 2030</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num" style="font-size:2.6rem; font-weight:800;">-92M</div>
+      <div class="stat__label">вытесненных<br>ролей</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num--dark" style="font-family:var(--f-display); font-size:2.6rem; font-weight:800;">=+78M</div>
+      <div class="stat__label">чистый<br>прирост</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num" style="font-size:2.6rem; font-weight:800;">57%</div>
+      <div class="stat__label">рабочих часов<br>можно автоматизировать</div>
+    </div>
+  </div>
+  <div class="callout--green" style="border-left:4px solid var(--c-green); background:var(--c-green-bg); padding:16px 22px; border-radius:0 6px 6px 0; margin-top:14px;">
+    <p><strong>Главный вывод:</strong> AI перестроит больше рабочих мест, чем заменит. 89% senior HR-лидеров ожидают изменение ролей, не уничтожение. <em>(BCG 2026)</em></p>
+  </div>
+  <p class="source">WEF Future of Jobs 2026 &middot; McKinsey &laquo;Agents, Robots, and Us&raquo; &middot; BCG 2026</p>
+</div>
+
+<!-- ================ SLIDE 4: ARMS RACE ================ -->
+<div class="slide" id="s4">
+  <p class="subtitle">Часть 1</p>
+  <h2>Гонка вооружений: AI vs AI</h2>
+  <div class="vs-row">
+    <div class="card" style="flex:1;">
+      <h3>Работодатели</h3>
+      <ul>
+        <li><strong>99%</strong> Fortune 500 используют AI в найме</li>
+        <li><strong>88%</strong> &mdash; для первичного скрининга</li>
+        <li><strong>80%</strong> массового рекрутинга &mdash; AI-голосовой скрининг</li>
+      </ul>
+    </div>
+    <div class="vs-badge">VS</div>
+    <div class="card" style="flex:1;">
+      <h3>Кандидаты</h3>
+      <ul>
+        <li><strong>70%</strong> используют AI для откликов</li>
+        <li><strong>2x</strong> объём откликов с 2022</li>
+        <li>AI-резюме, AI-cover letter, AI-mock interview</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout--red" style="border-left:4px solid var(--c-red); background:var(--c-red-bg); padding:16px 22px; border-radius:0 6px 6px 0; margin-top:12px;">
+    <p><strong>Результат:</strong> больше объёма, больше шума, растущие усталость и недоверие. Экономика &laquo;low-hire, low-fire&raquo; &mdash; каждая вакансия сложнее и ценнее.</p>
+  </div>
+  <p class="source">DemandSage 2026 &middot; Novoresume &middot; The Interview Guys</p>
+</div>
+
+<!-- ================ SLIDE 5: EMPLOYER AI ================ -->
+<div class="slide compact" id="s5">
+  <h2>Что видит работодатель: AI-скрининг изнутри</h2>
+  <div class="cols-2">
+    <div class="card">
+      <h3>Инструменты</h3>
+      <ul>
+        <li><strong>ATS</strong> &mdash; 71% HR-ов фильтруют автоматически</li>
+        <li><strong>HireVue</strong> &mdash; анализ видео (тон, мимика, содержание)</li>
+        <li><strong>Pymetrics</strong> &mdash; нейро-игры для soft skills</li>
+        <li><strong>Garmony.ai</strong> (РФ) &mdash; скрининг за 15 сек, 97% точность</li>
+        <li><strong>Potok + YandexGPT</strong> &mdash; полный стек рекрутинга</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Цена ошибок</h3>
+      <ul class="red-dot">
+        <li><strong>19%</strong> признают: AI отсеивает квалифицированных</li>
+        <li><strong>40%</strong> HR-лидеров: предвзятость &mdash; главная проблема</li>
+        <li><strong>55%</strong> жалеют об увольнениях &laquo;ради AI&raquo;</li>
+        <li><strong>75%</strong> откликов на hh.ru фильтруются AI до живого рекрутера</li>
+        <li>Только <strong>1 из 5</strong> AI-инвестиций даёт измеримый ROI</li>
+      </ul>
+    </div>
+  </div>
+  <p class="source">Gartner 2026 &middot; HR Executive &middot; vc.ru &middot; HBR янв 2026</p>
+</div>
+
+<!-- ================ SLIDE 6: CANDIDATE AI ================ -->
+<div class="slide compact" id="s6">
+  <h2>Что видит кандидат: AI-арсенал 2026</h2>
+  <div class="cols-3">
+    <div class="card">
+      <h3>Резюме</h3>
+      <ul>
+        <li><strong>ChatGPT / Claude</strong> &mdash; адаптация под вакансию</li>
+        <li><strong>Rezi</strong> &mdash; ATS-оптимизация</li>
+        <li><strong>ResumeUp.AI</strong> &mdash; отклик одним кликом</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Интервью</h3>
+      <ul>
+        <li><strong>Final Round AI</strong> &mdash; симуляция</li>
+        <li><strong>Yoodli</strong> &mdash; анализ речи</li>
+        <li><strong>Interview Coach</strong> &mdash; вопросы под вакансию</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Аналитика</h3>
+      <ul>
+        <li><strong>Perplexity</strong> &mdash; ресёрч компании за 5 мин</li>
+        <li><strong>Levels.fyi</strong> &mdash; рыночная зарплата</li>
+        <li><strong>LinkedIn + Telegram</strong> &mdash; нетворкинг</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:14px;">
+    <p><strong>Ловушка:</strong> AI помогает отправить больше откликов, но не лучших. 1 персонализированный &gt; 10 массовых. AI &mdash; ускоритель, не замена мозга.</p>
+  </div>
+</div>
+
+<!-- ================ SLIDE 7: RUSSIA PARADOX ================ -->
+<div class="slide" id="s7">
+  <p class="subtitle">Часть 2: Россия</p>
+  <h2>Российский парадокс: рекорды во всём</h2>
+  <div class="stat-row">
+    <div class="stat">
+      <div class="stat__num--green" style="font-family:var(--f-display); font-size:2.6rem; font-weight:800;">2.2%</div>
+      <div class="stat__label">безработица<br>(рекорд)</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num" style="font-size:2.6rem; font-weight:800;">11.4</div>
+      <div class="stat__label">hh-индекс<br>(антирекорд)</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num" style="font-size:2.6rem; font-weight:800;">+41%</div>
+      <div class="stat__label">рост резюме<br>на HH</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num" style="font-size:2.6rem; font-weight:800;">-27%</div>
+      <div class="stat__label">сокращение<br>вакансий</div>
+    </div>
+  </div>
+  <div class="callout--red" style="border-left:4px solid var(--c-red); background:var(--c-red-bg); padding:16px 22px; border-radius:0 6px 6px 0;">
+    <p><strong>Перевод:</strong> работа на рынке есть, но онлайн-конкуренция &mdash; жёстче, чем когда-либо. СПб &gt; 12, Башкирия &mdash; 13.8. PMI (деловая активность) &mdash; 48.3: ниже 50 девятый месяц подряд.</p>
+  </div>
+  <div class="callout" style="margin-top:8px;">
+    <p><strong>Алёна Владимирская (Forbes):</strong> &laquo;2026 будет плохим для поиска работы и карьерного роста. Рабочие специальности догоняют IT по зарплатам.&raquo;</p>
+  </div>
+  <p class="source">ExpertJob (3 апр 2026) &middot; Forbes.ru &middot; hh.ru Прогноз</p>
+</div>
+
+<!-- ================ SLIDE 8: RUSSIA AI HR ================ -->
+<div class="slide compact" id="s8">
+  <h2>AI в российском HR: цифры и платформы</h2>
+  <div class="cols-2">
+    <div>
+      <div class="stat-row" style="margin:0;">
+        <div class="stat" style="flex:1;">
+          <div class="stat__num" style="font-size:2.2rem; font-weight:800;">67%</div>
+          <div class="stat__label">компаний<br>используют AI в HR</div>
+        </div>
+        <div class="stat" style="flex:1;">
+          <div class="stat__num" style="font-size:2.2rem; font-weight:800;">75%</div>
+          <div class="stat__label">откликов hh.ru<br>фильтрует AI</div>
+        </div>
+      </div>
+      <div class="callout--red" style="border-left:4px solid var(--c-red); background:var(--c-red-bg); padding:14px 20px; border-radius:0 6px 6px 0; margin-top:12px;">
+        <p style="font-size:1.05rem;"><strong>AI-washing:</strong> компании используют &laquo;внедрение ИИ&raquo; как прикрытие для обычных сокращений. Половина уволенных нанимается обратно на сниженную зарплату. <em>(CNews)</em></p>
+      </div>
+    </div>
+    <div>
+      <table>
+        <tr><th>Платформа</th><th>Что делает</th></tr>
+        <tr><td><strong>Garmony.ai</strong></td><td>AI-скрининг за 15 сек, 97% точность</td></tr>
+        <tr><td><strong>Potok + YandexGPT</strong></td><td>Полный стек HR + генерация вакансий</td></tr>
+        <tr><td><strong>Talantix (HH)</strong></td><td>Нативная интеграция с hh.ru</td></tr>
+      </table>
+      <p style="font-size:1rem; color:var(--c-caption); margin-top:10px;">Рынок HR Tech РФ: <strong>40.6 млрд руб.</strong><br>50% &mdash; технологии рекрутинга</p>
+    </div>
+  </div>
+  <p class="source">vc.ru HR 2026 &middot; CNews (4 фев 2026) &middot; Neo Research</p>
+</div>
+
+<!-- ================ SLIDE 9: TELEGRAM + CHATGPT BAN ================ -->
+<div class="slide compact" id="s9">
+  <h2>Побег в Telegram + будущее AI-инструментов</h2>
+  <div class="cols-2">
+    <div class="card">
+      <h3>Почему уходят с HH</h3>
+      <ul>
+        <li>AI-алгоритмы HH отсеивают живых кандидатов</li>
+        <li>Невозможно достучаться до человека</li>
+        <li>Усталость от &laquo;резюме просмотрено&raquo; без ответа</li>
+        <li><strong>300+</strong> Telegram-каналов с вакансиями</li>
+        <li>TG стал &laquo;гибрид биржи труда и HR-ассистента&raquo;</li>
+      </ul>
+    </div>
+    <div class="card card--accent">
+      <h3 style="color:var(--c-red);">Минцифры: блокировка с 1.09.2027</h3>
+      <ul class="red-dot">
+        <li><strong>Под блокировку:</strong> ChatGPT, Claude, Gemini</li>
+        <li><strong>Останутся:</strong> DeepSeek, Qwen (open-source)</li>
+        <li>Сервисы &gt;500K в сутки &mdash; хранение данных 3 года в РФ</li>
+        <li><strong>Прямое влияние:</strong> HR-tech на GPT/Claude API придётся мигрировать</li>
+      </ul>
+      <p class="source" style="margin-top:8px;">NGS.ru (20 мар 2026) &middot; 82K просмотров</p>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:10px;">
+    <p><strong>Вывод:</strong> учиться использовать AI нужно <strong>сейчас</strong>, пока инструменты доступны. И осваивать open-source альтернативы.</p>
+  </div>
+</div>
+
+<!-- ================ SLIDE 10: RESUME IS DYING ================ -->
+<div class="slide" id="s10">
+  <p class="subtitle">Часть 3</p>
+  <h2>Резюме умирает &rarr; skills-based hiring</h2>
+  <div class="stat-row">
+    <div class="stat">
+      <div class="stat__num" style="font-size:2.6rem; font-weight:800;">4/10</div>
+      <div class="stat__label">работодателей<br>доверяют резюме</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num" style="font-size:2.6rem; font-weight:800;">25%</div>
+      <div class="stat__label">заявок будут<br>фейковыми к 2028</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num--green" style="font-family:var(--f-display); font-size:2.6rem; font-weight:800;">85%</div>
+      <div class="stat__label">компаний перешли<br>на skills-based</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num--green" style="font-family:var(--f-display); font-size:2.6rem; font-weight:800;">53%</div>
+      <div class="stat__label">убрали требование<br>к диплому</div>
+    </div>
+  </div>
+  <div class="cols-2" style="margin-top:16px;">
+    <div class="callout--red" style="border-left:4px solid var(--c-red); background:var(--c-red-bg); padding:14px 20px; border-radius:0 6px 6px 0;">
+      <p><strong>Уходит:</strong> традиционное резюме, &laquo;образование + опыт&raquo;, keyword-stuffing</p>
+    </div>
+    <div class="callout--green" style="border-left:4px solid var(--c-green); background:var(--c-green-bg); padding:14px 20px; border-radius:0 6px 6px 0;">
+      <p><strong>Приходит:</strong> портфолио, тестовые задания (+48%), behavioural-интервью, контент как proof of work</p>
+    </div>
+  </div>
+  <p class="source">Gartner &middot; Metaview &middot; CoderPad State of Tech Hiring 2026</p>
+</div>
+
+<!-- ================ SLIDE 11: SKILLS PREMIUM ================ -->
+<div class="slide compact" id="s11">
+  <p class="subtitle">Часть 4</p>
+  <h2>Навыки, за которые платят больше</h2>
+  <div class="cols-2">
+    <div>
+      <div class="stat" style="text-align:center; margin-bottom:14px;">
+        <div class="stat__num--green" style="font-family:var(--f-display); font-size:3rem; font-weight:800;">+56%</div>
+        <div class="stat__label">зарплатная премия<br>за AI-навыки (IMF 2026)</div>
+      </div>
+      <table>
+        <tr><th>Навык</th><th>Тренд</th></tr>
+        <tr><td>AI Engineering</td><td><span class="tag--green" style="display:inline-block; background:var(--c-green-bg); color:var(--c-green); padding:2px 10px; border-radius:12px; font-size:.85rem; font-weight:600;">#1 LinkedIn</span></td></tr>
+        <tr><td>AI Literacy</td><td><span class="tag--green" style="display:inline-block; background:var(--c-green-bg); color:var(--c-green); padding:2px 10px; border-radius:12px; font-size:.85rem; font-weight:600;">+70% вакансий</span></td></tr>
+        <tr><td>Prompt Engineering</td><td><span class="tag--green" style="display:inline-block; background:var(--c-green-bg); color:var(--c-green); padding:2px 10px; border-radius:12px; font-size:.85rem; font-weight:600;">топ-5</span></td></tr>
+        <tr><td>Cybersecurity</td><td><span class="tag--green" style="display:inline-block; background:var(--c-green-bg); color:var(--c-green); padding:2px 10px; border-radius:12px; font-size:.85rem; font-weight:600;">+18%</span></td></tr>
+        <tr><td>Public Speaking</td><td><span class="tag" style="font-size:.85rem;">AI не заменит</span></td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>Россия: зарплаты AI/ML</h3>
+      <table>
+        <tr><th>Уровень</th><th>Руб./мес</th></tr>
+        <tr><td>Junior ML</td><td><strong>80-145K</strong></td></tr>
+        <tr><td>Middle ML</td><td><strong>150-300K</strong></td></tr>
+        <tr><td>Senior ML</td><td><strong>300-550K</strong></td></tr>
+        <tr><td>AI-инженер (спец.)</td><td><strong>300-770K</strong></td></tr>
+      </table>
+      <p style="font-size:.95rem; color:var(--c-caption); margin-top:10px;">Рост: <strong>10-20%</strong> в год. Спрос на AI-вакансии: <strong>x2.3</strong> за год.</p>
+      <p class="source" style="margin-top:6px;">GeekLink &middot; DreamJob &middot; Kommersant</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================ SLIDE 12: GEN Z + AI-WASHING ================ -->
+<div class="slide" id="s12">
+  <h2>Кого AI бьёт сильнее всего</h2>
+  <div class="cols-2">
+    <div class="card card--accent">
+      <h3>Gen Z: лучшие с AI, но страдают</h3>
+      <div class="stat-row" style="margin:10px 0;">
+        <div class="stat" style="padding:12px;">
+          <div class="stat__num--green" style="font-family:var(--f-display); font-size:2rem; font-weight:800;">22%</div>
+          <div class="stat__label">AI-коэффициент</div>
+        </div>
+        <div class="stat" style="padding:12px;">
+          <div class="stat__num" style="font-size:2rem; font-weight:800;">-13%</div>
+          <div class="stat__label">занятость 22-25</div>
+        </div>
+      </div>
+      <p style="font-size:1.05rem;">Entry-level позиции упали на <strong>35%</strong> за 18 мес. Увольняют тех, кто мог бы усилить технологию.</p>
+      <p class="source">Dallas Fed 2026 &middot; WEF</p>
+    </div>
+    <div class="card">
+      <h3>AI-washing увольнений</h3>
+      <ul class="red-dot">
+        <li><strong>55%</strong> компаний жалеют об увольнениях &laquo;ради AI&raquo;</li>
+        <li>Только <strong>4.5%</strong> сокращений в США реально из-за AI <em>(Yale)</em></li>
+        <li>Gartner: <strong>20%</strong> компаний ликвидируют &gt;50% среднего менеджмента</li>
+        <li>IBM идёт против тренда: <strong>утроила</strong> найм на entry-level</li>
+      </ul>
+      <p class="source">Yale Budget Lab &middot; Gartner &middot; HR Executive</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================ SLIDE 13: GLOBAL RESEARCH ================ -->
+<div class="slide compact" id="s13">
+  <h2>Что говорят главные исследования 2026</h2>
+  <table>
+    <tr><th style="width:30%;">Источник</th><th>Ключевая цифра</th></tr>
+    <tr><td><strong>WEF</strong> Future of Jobs</td><td>+170M новых ролей, -92M вытесненных = <strong>+78M нетто</strong></td></tr>
+    <tr><td><strong>McKinsey</strong> MGI</td><td><strong>57%</strong> рабочих часов можно автоматизировать; спрос на AI fluency <strong>x7</strong> за 2 года</td></tr>
+    <tr><td><strong>IMF</strong> SDN/2026/001</td><td><strong>40%</strong> мировой занятости подвержены влиянию AI</td></tr>
+    <tr><td><strong>Harvard</strong> HBS</td><td><strong>-17%</strong> в автоматизируемых ролях, <strong>+22%</strong> в human-AI коллаборации</td></tr>
+    <tr><td><strong>LinkedIn</strong></td><td>AI создал <strong>1.3M новых рабочих мест</strong> за 2 года</td></tr>
+    <tr><td><strong>Indeed</strong></td><td>AI-вакансии <strong>+130%</strong>, но 90% приходятся на 1% компаний</td></tr>
+    <tr><td><strong>ILO</strong></td><td>1 из 4 рабочих мест подвержен GenAI; риск женщин <strong>x2.7</strong> выше мужчин</td></tr>
+    <tr><td><strong>Brookings</strong></td><td>AI-adoption = <strong>рост фирм</strong>, увеличение занятости</td></tr>
+    <tr><td><strong>Stanford HAI</strong></td><td>+1% AI-вакансий в банке = <strong>+0.36%</strong> общей занятости</td></tr>
+  </table>
+  <p class="source">Все отчёты опубликованы в янв-мар 2026. Полные ссылки &mdash; на последнем слайде.</p>
+</div>
+
+<!-- ================ SLIDE 14: OPEN SOURCE ARSENAL ================ -->
+<div class="slide compact" id="s14">
+  <p class="subtitle">Часть 5: Инструменты</p>
+  <h2>Open-source арсенал на GitHub</h2>
+  <div class="cols-2">
+    <div>
+      <h3>Резюме и отклики</h3>
+      <div class="repo"><div class="repo__stars">36K</div><div><a href="https://github.com/amruthpillai/reactive-resume" class="repo__name">Reactive Resume</a><div class="repo__desc">Конструктор резюме. 50+ шаблонов, self-hosted</div></div></div>
+      <div class="repo"><div class="repo__stars">26K</div><div><a href="https://github.com/srbhr/Resume-Matcher" class="repo__name">Resume-Matcher</a><div class="repo__desc">AI-матчинг резюме и вакансии. Score соответствия</div></div></div>
+      <div class="repo"><div class="repo__stars">29K</div><div><a href="https://github.com/feder-cr/Jobs_Applier_AI_Agent_AIHawk" class="repo__name">AIHawk</a><div class="repo__desc">Автоматизация откликов на LinkedIn через AI</div></div></div>
+      <div class="repo"><div class="repo__stars">16K</div><div><a href="https://github.com/rendercv/rendercv" class="repo__name">RenderCV</a><div class="repo__desc">YAML + LaTeX. Идеален для инженеров</div></div></div>
+      <div class="repo"><div class="repo__stars">3K</div><div><a href="https://github.com/speedyapply/JobSpy" class="repo__name">JobSpy</a><div class="repo__desc">Скрапинг вакансий с 6+ платформ единым API</div></div></div>
+    </div>
+    <div>
+      <h3>Интервью и подготовка</h3>
+      <div class="repo"><div class="repo__stars">1.5K</div><div><a href="https://github.com/Tameyer41/liftoff" class="repo__name">Liftoff</a><div class="repo__desc">Mock-интервью с AI-фидбеком</div></div></div>
+      <div class="repo"><div class="repo__stars">1.1K</div><div><a href="https://github.com/FoloUp/FoloUp" class="repo__name">FoloUp</a><div class="repo__desc">Голосовой AI-интервьюер, генерация вопросов</div></div></div>
+      <div class="repo"><div class="repo__stars">885</div><div><a href="https://github.com/evinjohnn/natively-cluely-ai-assistant" class="repo__name">Natively</a><div class="repo__desc">AI-копайлот для интервью. Бесплатная альтернатива Cluely ($149/мес)</div></div></div>
+      <div class="repo"><div class="repo__stars">487</div><div><a href="https://github.com/Gsync/jobsync" class="repo__name">JobSync</a><div class="repo__desc">Self-hosted трекер откликов + AI-ассистент</div></div></div>
+      <div class="repo"><div class="repo__stars">8.5K</div><div><a href="https://github.com/xitanggg/open-resume" class="repo__name">Open Resume</a><div class="repo__desc">Builder + AI-парсер PDF</div></div></div>
+    </div>
+  </div>
+  <p class="source">Все репозитории с открытым исходным кодом, бесплатны, верифицированы 6 апреля 2026</p>
+</div>
+
+<!-- ================ SLIDE 15: HOW TO BEAT ATS ================ -->
+<div class="slide compact" id="s15">
+  <p class="subtitle">Часть 6: Практика</p>
+  <h2>Как работать с AI-скринингом</h2>
+  <div class="cols-3">
+    <div class="card">
+      <h3>1. Резюме</h3>
+      <ul>
+        <li>Ключевые слова из вакансии &mdash; буквально</li>
+        <li>Метрики и цифры</li>
+        <li>Простая структура (без таблиц, колонок)</li>
+        <li>PDF, не DOCX</li>
+        <li>Переписать 20-30% AI-текста вручную</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>2. Обход ATS</h3>
+      <ul>
+        <li>Найди нанимающего менеджера в LinkedIn</li>
+        <li>Telegram-каналы HR-ов</li>
+        <li>Рефералы = канал #1</li>
+        <li>Митапы и конференции</li>
+        <li>Прямое письмо &mdash; 3-5 строк</li>
+      </ul>
+    </div>
+    <div class="card card--green">
+      <h3 style="color:var(--c-green);">3. Authentic Signals</h3>
+      <ul class="green-dot">
+        <li>Контент: статьи, посты, видео</li>
+        <li>GitHub / портфолио</li>
+        <li>Рекомендации в LinkedIn</li>
+        <li>Участие в сообществах</li>
+        <li>Кейсы, а не описание &laquo;обязанностей&raquo;</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:10px;">
+    <p><strong>Правило:</strong> AI &mdash; для черновика. Финальная версия &mdash; твоя. ATS распознаёт AI-генерированные тексты.</p>
+  </div>
+</div>
+
+<!-- ================ SLIDE 16: STRATEGY ================ -->
+<div class="slide" id="s16">
+  <h2>Стратегия поиска работы в 2026</h2>
+  <div class="cols-4">
+    <div class="card" style="text-align:center; padding:20px 14px;">
+      <div style="font-size:2rem; margin-bottom:6px; font-family:var(--f-display); font-weight:800; color:var(--c-accent);">1</div>
+      <h3 style="font-size:1.1rem;">Фундамент</h3>
+      <p style="font-size:.95rem;">AI Literacy +<br>портфолио +<br>LinkedIn-профиль</p>
+    </div>
+    <div class="card" style="text-align:center; padding:20px 14px;">
+      <div style="font-size:2rem; margin-bottom:6px; font-family:var(--f-display); font-weight:800; color:var(--c-accent);">2</div>
+      <h3 style="font-size:1.1rem;">3-4 канала</h3>
+      <p style="font-size:.95rem;">HH + Telegram +<br>LinkedIn +<br>рефералы</p>
+    </div>
+    <div class="card" style="text-align:center; padding:20px 14px;">
+      <div style="font-size:2rem; margin-bottom:6px; font-family:var(--f-display); font-weight:800; color:var(--c-accent);">3</div>
+      <h3 style="font-size:1.1rem;">Качество &gt; кол-во</h3>
+      <p style="font-size:.95rem;">5 персональных<br>откликов &gt;<br>50 массовых</p>
+    </div>
+    <div class="card card--accent" style="text-align:center; padding:20px 14px;">
+      <div style="font-size:2rem; margin-bottom:6px; font-family:var(--f-display); font-weight:800; color:var(--c-accent);">4</div>
+      <h3 style="font-size:1.1rem;">Показывай</h3>
+      <p style="font-size:.95rem;">Контент, кейсы,<br>open-source &mdash;<br>authentic signals</p>
+    </div>
+  </div>
+  <div class="callout--green" style="border-left:4px solid var(--c-green); background:var(--c-green-bg); padding:16px 22px; border-radius:0 6px 6px 0; margin-top:20px;">
+    <p><strong>Формула:</strong> T-shaped навыки + AI-инструменты + мультиканальность + authentic signals = оффер за 6-8 недель.</p>
+  </div>
+</div>
+
+<!-- ================ SLIDE 17: HH OUTREACH TOOL ================ -->
+<div class="slide compact" id="s17">
+  <p class="subtitle">Демо: что мы строим в СБОРКА</p>
+  <h2>AI-аутрич на HH.ru &mdash; наш инструмент</h2>
+  <div class="cols-2">
+    <div>
+      <div class="card card--accent" style="margin-bottom:14px;">
+        <h3>Что делает</h3>
+        <ul class="green-dot">
+          <li><strong>Ищет</strong> вакансии на HH по вашему запросу</li>
+          <li><strong>Фильтрует</strong> &mdash; исключает нерелевантные (junior, WB, Ozon, разработчиков)</li>
+          <li><strong>Генерирует</strong> уникальное сопроводительное письмо для каждой вакансии через AI</li>
+          <li><strong>Отправляет</strong> отклик автоматически через браузер</li>
+          <li><strong>Логирует</strong> каждое действие в базу данных</li>
+        </ul>
+      </div>
+      <div class="stat-row" style="margin:0;">
+        <div class="stat" style="flex:1;">
+          <div class="stat__num--green" style="font-family:var(--f-display); font-size:2.2rem; font-weight:800;">106+</div>
+          <div class="stat__label">откликов<br>отправлено</div>
+        </div>
+        <div class="stat" style="flex:1;">
+          <div class="stat__num--dark" style="font-family:var(--f-display); font-size:2.2rem; font-weight:800;">1293</div>
+          <div class="stat__label">компаний<br>в базе</div>
+        </div>
+        <div class="stat" style="flex:1;">
+          <div class="stat__num--blue" style="font-family:var(--f-display); font-size:2.2rem; font-weight:800;">0 руб</div>
+          <div class="stat__label">стоимость<br>инструмента</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:14px;">
+        <h3>Как работает письмо</h3>
+        <div style="background:var(--c-muted-bg); border-radius:var(--r-sm); padding:14px 18px; font-size:.95rem; line-height:1.6; color:var(--c-body); font-family:var(--f-body);">
+          <span style="color:var(--c-green); font-weight:600;">[Приветствие]</span> Добрый день!<br>
+          <span style="color:var(--c-blue); font-weight:600;">[Реакция на вакансию]</span> Увидел вашу вакансию контент-менеджера &mdash; у меня есть релевантный опыт в...<br>
+          <span style="color:var(--c-accent); font-weight:600;">[Оффер]</span> Могу закрыть эту задачу как подрядчик &mdash; экономия ~20% на найме...<br>
+          <span style="color:var(--c-caption); font-weight:600;">[CTA]</span> Свободен для звонка в среду/четверг 14-18.
+        </div>
+      </div>
+      <div class="card">
+        <h3>Ключевое</h3>
+        <ul>
+          <li><strong>Не шаблон</strong> &mdash; AI анализирует описание вакансии и генерирует уникальный текст</li>
+          <li><strong>Anti-AI detection</strong> &mdash; избегает слов-маркеров (&laquo;синергия&raquo;, &laquo;инновационный&raquo;)</li>
+          <li><strong>Парсинг зарплат</strong> &mdash; руб, $, &euro; с конвертацией</li>
+          <li><strong>Open-source</strong> &mdash; весь код на GitHub</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <p class="source">github.com/TimmyZinin/hh-outreach &middot; github.com/TimmyZinin/lead-mashina</p>
+</div>
+
+<!-- ================ SLIDE 18: CTA ================ -->
+<div class="slide" id="s18">
+  <div style="text-align:center;">
+    <h1 style="font-size:3rem; margin-bottom:14px;">Вопросы?</h1>
+    <div class="divider" style="margin:14px auto;"></div>
+    <p style="font-size:1.35rem; color:var(--c-body); margin-top:16px; max-width:600px; margin-left:auto; margin-right:auto;">В СБОРКЕ мы собираем всё это в систему:<br>навыки + AI + стратегия + сопровождение</p>
+    <div style="margin-top:32px;">
+      <a href="https://sborka.work" class="cta" style="text-decoration:none;">sborka.work</a>
+    </div>
+    <p style="font-size:1.1rem; color:var(--c-caption); margin-top:24px;">@Sborka_work_bot &middot; Оффер за 6-8 недель</p>
+    <p style="font-size:.95rem; color:var(--c-faint); margin-top:20px;">Тим Зинин &middot; 6 апреля 2026</p>
+  </div>
+</div>
+
+<!-- ================ SLIDE 19: SOURCES ================ -->
+<div class="slide compact" id="s19">
+  <h2>Источники и ссылки</h2>
+  <div class="cols-2">
+    <div>
+      <h3 style="font-size:1.1rem;">Исследования</h3>
+      <ul style="font-size:.9rem;">
+        <li><a href="https://www.weforum.org/publications/the-future-of-jobs-report-2025/" style="color:var(--c-accent-dk);">WEF Future of Jobs 2025/2026</a></li>
+        <li><a href="https://www.mckinsey.com/mgi/our-research/agents-robots-and-us-skill-partnerships-in-the-age-of-ai" style="color:var(--c-accent-dk);">McKinsey &laquo;Agents, Robots, and Us&raquo;</a></li>
+        <li><a href="https://www.imf.org/en/publications/staff-discussion-notes/issues/2026/01/09/bridging-skill-gaps-for-the-future-new-jobs-creation-in-the-ai-age-572136" style="color:var(--c-accent-dk);">IMF SDN/2026/001</a></li>
+        <li><a href="https://hbr.org/2026/03/research-how-ai-is-changing-the-labor-market" style="color:var(--c-accent-dk);">HBR: How AI Is Changing Labor Market</a></li>
+        <li><a href="https://hbr.org/2026/01/ai-has-made-hiring-worse-but-it-can-still-help" style="color:var(--c-accent-dk);">HBR: AI Has Made Hiring Worse</a></li>
+        <li><a href="https://www.bcg.com/publications/2026/ai-will-reshape-more-jobs-than-it-replaces" style="color:var(--c-accent-dk);">BCG: AI Will Reshape More Jobs</a></li>
+        <li><a href="https://economicgraph.linkedin.com/content/dam/me/economicgraph/en-us/PDF/linkedIn-labor-market-report-building-a-future-of-work-that-works-jan-2026.pdf" style="color:var(--c-accent-dk);">LinkedIn Labor Market Report 2026</a></li>
+        <li><a href="https://budgetlab.yale.edu/research/evaluating-impact-ai-labor-market-current-state-affairs" style="color:var(--c-accent-dk);">Yale Budget Lab: AI Impact</a></li>
+        <li><a href="https://www.ilo.org/publications/generative-ai-and-jobs-refined-global-index-occupational-exposure" style="color:var(--c-accent-dk);">ILO: GenAI Global Index</a></li>
+        <li><a href="https://hai.stanford.edu/ai-index/2025-ai-index-report" style="color:var(--c-accent-dk);">Stanford HAI AI Index</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="font-size:1.1rem;">Россия и новости</h3>
+      <ul style="font-size:.9rem;">
+        <li><a href="https://expertjob.ru/blog/krizis-na-rynke-truda-rossii-index-headhunter-mart-2026" style="color:var(--c-accent-dk);">ExpertJob: hh-индекс март 2026</a></li>
+        <li><a href="https://v1.ru/text/job/2026/04/05/76347803/" style="color:var(--c-accent-dk);">V1.ru: Чистка белых воротничков</a></li>
+        <li><a href="https://ngs.ru/text/world/2026/03/20/76321611/" style="color:var(--c-accent-dk);">NGS.ru: Блокировка нейросетей</a></li>
+        <li><a href="https://www.forbes.ru/svoi-biznes/552447-alena-vladimirskaa-2026-god-budet-plohim-dla-poiska-raboty-i-kar-ernogo-rosta" style="color:var(--c-accent-dk);">Forbes: Прогноз Владимирской</a></li>
+        <li><a href="https://vc.ru/hr/2771409-ai-v-rekrutinge-2026" style="color:var(--c-accent-dk);">vc.ru: AI в рекрутинге 2026</a></li>
+        <li><a href="https://www.cnews.ru/news/top/2026-02-04_u_rabotodatelej_novyj_trend" style="color:var(--c-accent-dk);">CNews: AI-washing увольнений</a></li>
+        <li><a href="https://www.gartner.com/en/newsroom/press-releases/2025-10-07-gartner-says-ai-revolution-and-cost-pressures-are-two-forces-driving-the-top-four-trends-for-talent-acquisition-in-2026" style="color:var(--c-accent-dk);">Gartner: Talent Acquisition 2026</a></li>
+        <li><a href="https://www.hiringlab.org/2026/01/22/january-labor-market-update-jobs-mentioning-ai-are-growing-amid-broader-hiring-weakness/" style="color:var(--c-accent-dk);">Indeed Hiring Lab: AI Jobs</a></li>
+      </ul>
+      <h3 style="font-size:1.1rem; margin-top:12px;">GitHub</h3>
+      <ul style="font-size:.9rem;">
+        <li><a href="https://github.com/amruthpillai/reactive-resume" style="color:var(--c-accent-dk);">Reactive Resume (36K stars)</a></li>
+        <li><a href="https://github.com/feder-cr/Jobs_Applier_AI_Agent_AIHawk" style="color:var(--c-accent-dk);">AIHawk (29K stars)</a></li>
+        <li><a href="https://github.com/srbhr/Resume-Matcher" style="color:var(--c-accent-dk);">Resume-Matcher (26K stars)</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CONTROLS ============ -->
+<div class="slide-counter" id="counter">1 / 19</div>
+<div class="controls">
+  <button onclick="prev()">&larr; Назад</button>
+  <button class="btn-primary" onclick="next()">Далее &rarr;</button>
+</div>
+
+<script>
+let current = 0;
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+
+function show(n) {
+  slides[current].classList.remove('active');
+  current = (n + total) % total;
+  slides[current].classList.add('active');
+  document.getElementById('counter').textContent = `${current + 1} / ${total}`;
+}
+
+function next() { show(current + 1); }
+function prev() { show(current - 1); }
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft' || e.key === 'Backspace') { e.preventDefault(); prev(); }
+  if (e.key === 'Home') { e.preventDefault(); show(0); }
+  if (e.key === 'End') { e.preventDefault(); show(total - 1); }
+});
+</script>
+
+</body>
+</html>
